@@ -273,7 +273,8 @@ print(recherche2(1,[2,3,4]))
 print(insere([1, 2, 4, 5], 3))
 
 ####################################### Sujet 14 #######################################
-from random import randint  # noqa: E402
+from random import randint
+from turtle import pos  # noqa: E402
 
 def lancer(n:int)->list[int]:
     tab = []
@@ -382,4 +383,186 @@ def moyenne(notes:list[(float,int)])->float:
 
     return numerateur / denominateur
 
+def ligne_suivante(ligne): #DUR A REVOIR AVANT
+    '''Renvoie la ligne suivant ligne du triangle de Pascal'''
+    ligne_suiv = [ligne[0]] 
+    for i in range(1,len(ligne)): 
+        ligne_suiv.append(ligne[i-1]+ligne[i]) 
+    ligne_suiv.append(ligne[-1]) 
+    return ligne_suiv
+
+def pascal(n): #DUR A REVOIR AVANT
+    '''Renvoie le triangle de Pascal de hauteur n'''
+    triangle = [[1]]
+    for k in range(n): 
+        ligne_k = ligne_suivante(triangle[-1]) 
+        triangle.append(ligne_k)
+    return triangle
+
 print("------------------ TEST SUJET 16 ------------------")
+
+print(moyenne([(15.0,2),(9.0,1),(12.0,3)]))
+
+print(pascal(6))
+
+####################################### Sujet 17 #######################################
+
+class Noeud:
+    def __init__(self, etiquette, gauche, droit):
+        self.v = etiquette
+        self.gauche = gauche
+        self.droit = droit
+
+a = Noeud(1, Noeud(4, None, None), Noeud(0, None, Noeud(7, None, None)))
+
+def hauteur(arbre):
+    if arbre is None:
+        return -1
+    
+    else : 
+        return 1 + max(hauteur(arbre.gauche),hauteur(arbre.droit))
+    
+def taille(arbre):
+    if arbre is None: 
+        return 0
+    
+    else : 
+        return 1 + taille(arbre.gauche) + taille(arbre.droit)
+
+def ajoute(indice, element, tab): #DUR A REVOIR AVANT 
+    '''Renvoie un nouveau tableau obtenu en insérant
+    element à l'indice indice dans le tableau tab.'''
+    nbre_elts = len(tab)
+    tab_ins = [0] * (nbre_elts + 1)
+    for i in range(indice):
+        tab_ins[i] = tab[i]
+    tab_ins[indice] = element 
+    for i in range(indice + 1, nbre_elts + 1):
+        tab_ins[i] = tab[i-1]
+    return tab_ins
+
+print("------------------ TEST SUJET 17 ------------------")
+
+print(hauteur(a))
+print(taille(a))
+
+print(ajoute(1, 4, [7, 8, 9]))
+
+####################################### Sujet 18 #######################################
+
+def moyenne(tableau):
+
+    numerateur = 0 
+
+    for element in tableau:
+        numerateur += element
+
+    return numerateur / len(tableau)
+
+def dichotomie(tab, x):
+    """applique une recherche dichotomique pour déterminer
+    si x est dans le tableau trié tab.
+    La fonction renvoie True si tab contient x et False sinon"""
+
+    debut = 0
+    fin = len(tab)-1
+    while debut <= fin:
+        m = (debut+fin) // 2
+        if x == tab[m]:
+            return True
+        if x > tab[m]:
+            debut = m + 1 
+        else:
+            fin = m - 1 
+    return False
+
+print("------------------ TEST SUJET 18 ------------------")
+
+print(moyenne([1,2]))
+print(dichotomie([15, 16, 18, 19, 23, 24, 28], 28))
+
+####################################### Sujet 19 #######################################
+
+def recherche_min(tableau:list[int])->int:
+    mini = tableau[0]
+    indice = 0 
+
+    for element in tableau: 
+        if element < mini:
+            mini = element 
+            indice = tableau.index(element)
+
+    return indice
+
+def separe(tab):
+    '''Separe les 0 et les 1 dans le tableau tab'''
+    gauche = 0
+    droite = len(tab)-1 
+    while gauche < droite:
+        if tab[gauche] == 0 :
+            gauche += 1 
+        else :
+            tab[gauche] = tab[droite] 
+            tab[droite] = 1 
+            droite -= 1 
+    return tab
+
+print("------------------ TEST SUJET 19 ------------------")
+
+print(recherche_min([5, 3, 2, 2, 4]))
+print(separe([1, 0, 1, 0, 1, 0, 1, 0]))
+
+####################################### Sujet 20 #######################################
+
+def min_et_max(tableau):
+    dico = {'min':tableau[0],'max':tableau[0]}
+
+    for element in tableau : 
+
+        if element < dico['min']:
+            dico['min'] = element 
+
+        if element > dico["max"]:
+            dico["max"] = element
+
+    return dico 
+
+class Carte:
+    def __init__(self, c, v):
+        """ Initialise les attributs couleur (entre 1 et 4), et valeur (entre 1 et 13). """
+        self.couleur = c
+        self.valeur = v
+
+    def recuperer_valeur(self):
+        """ Renvoie la valeur de la carte : As, 2, ..., 10, Valet, Dame, Roi """
+        valeurs = ['As','2', '3', '4', '5', '6', '7', '8', '9', '10', 'Valet', 'Dame', 'Roi']
+        return valeurs[self.valeur - 1]
+
+    def recuperer_couleur(self):
+        """ Renvoie la couleur de la carte (parmi pique, coeur, carreau, trèfle). """
+        couleurs = ['pique', 'coeur', 'carreau', 'trèfle']
+        return couleurs[self.couleur - 1]
+
+class Paquet_de_cartes:
+    def __init__(self):
+        """ Initialise l'attribut contenu avec une liste des 52 objets Carte possibles
+            rangés par valeurs croissantes en commençant par pique, puis coeur,
+            carreau et tréfle. """
+        self.contenu = []
+        for couleur in range(1,5):
+            for valeur in range(1,14):
+                self.contenu.append(Carte(couleur,valeur))
+
+    def recuperer_carte(self, pos):
+        """ Renvoie la carte qui se trouve à la position pos (entier compris entre 0 et 51). """
+        assert (pos >= 0 and pos <= 51), 'on est dans un paquet de 52 cartes ducon !'
+        
+        return self.contenu[pos]
+
+print("------------------ TEST SUJET 20 ------------------")
+
+print(min_et_max([0, 1, 4, 2, -2, 9, 3, 1, 7, 1]))
+jeu = Paquet_de_cartes()
+carte1 = jeu.recuperer_carte(20)
+
+print(carte1.recuperer_valeur() + " de " + carte1.recuperer_couleur())
