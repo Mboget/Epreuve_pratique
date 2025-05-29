@@ -74,7 +74,7 @@ def multiplication(n1:int,n2:int)->int:
     return resultat
 
 
-def dichotomie(tab, x):
+def dichotomie(tab, x): # DUR A REVOIR AVANT
     """
     tab : tableau d'entiers trié dans l'ordre croissant
     x : nombre entier
@@ -101,3 +101,88 @@ print( multiplication(-4, -8))
 print(dichotomie([15, 16, 18, 19, 23, 24, 28, 29, 31, 33],28))
 print(dichotomie([15, 16, 18, 19, 23, 24, 28, 29, 31, 33],27))
 
+
+####################################### Sujet 10 #######################################
+
+def recherche(tableau,n): # DUR A REVOIR AVANT
+
+    debut = 0
+
+    fin = len(tableau)-1
+
+    while debut <= fin :
+        m = (debut+fin)//2
+
+        if n == tableau[m]:
+            return m
+        if n < tableau[m]:
+            fin = m -1
+
+        else : 
+            debut = m + 1
+    return None 
+
+alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
+def position_alphabet(lettre):
+    '''Renvoie la position de la lettre dans l'alphabet'''
+    return ord(lettre) - ord('A')
+
+def cesar(message, decalage):
+    '''Renvoie le message codé par la méthode de César
+    pour le decalage donné'''
+    resultat = ''
+    for lettre in message: 
+        if 'A' <= lettre and lettre <= 'Z':
+            indice = (position_alphabet(lettre)+decalage) % 26 
+            resultat = resultat + alphabet[indice]
+        else:
+            resultat += lettre 
+    return resultat
+
+
+
+print("------------------ TEST SUJET 10 ------------------")
+
+print( recherche([2, 3, 4, 5, 6], 5))
+print(recherche([2, 3, 4, 6, 7], 5))
+
+print(cesar('BONJOUR A TOUS. VIVE LA MATIERE NSI !', 4))
+print(cesar('GTSOTZW F YTZX. ANAJ QF RFYNJWJ SXN !', -5))
+
+
+####################################### Sujet 11 #######################################
+
+def parcours_largeur(arbre): # DUR A REVOIR AVANT
+    parcours = []
+    file = [arbre]
+    while file != []:
+        a = file.pop(0)
+        parcours.append(a[1])
+        if a[0] is not None:
+            file.append(a[0])
+        if a[2] is not None:
+            file.append(a[2])
+    return parcours
+
+def somme_max(tab):
+    n = len(tab)
+    sommes_max = [0]*n
+    sommes_max[0] = tab[0]
+    # on calcule la plus grande somme se terminant en i
+    for i in range(1,n):
+        if sommes_max[i-1] + tab[i] > tab[i]:
+            sommes_max[i] = sommes_max[i-1] + tab[i]
+        else:
+            sommes_max[i] = tab[i]
+    # on en déduit la plus grande somme de celles-ci
+    maximum = 0
+    for i in range(1, n):
+        if sommes_max[i]  > sommes_max[maximum]:
+            maximum = i
+    return sommes_max[maximum]
+
+print("------------------ TEST SUJET 11 ------------------")
+
+arbre = ( ( (None, 1, None), 2, (None, 3, None) ), 4, ( (None, 5, None), 6, (None, 7, None) ) )
+print(parcours_largeur(arbre))
