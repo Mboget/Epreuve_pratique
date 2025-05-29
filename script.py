@@ -273,8 +273,7 @@ print(recherche2(1,[2,3,4]))
 print(insere([1, 2, 4, 5], 3))
 
 ####################################### Sujet 14 #######################################
-from random import randint
-from turtle import pos  # noqa: E402
+from random import randint  # noqa: E402
 
 def lancer(n:int)->list[int]:
     tab = []
@@ -566,3 +565,253 @@ jeu = Paquet_de_cartes()
 carte1 = jeu.recuperer_carte(20)
 
 print(carte1.recuperer_valeur() + " de " + carte1.recuperer_couleur())
+
+####################################### Sujet 21 #######################################
+
+def indices_maxi(tableau:list[int])->(int,list[int]): # type: ignore
+    indices = []
+    maxi = tableau[0]
+
+    for i in range(len(tableau)):
+        if tableau[i] > maxi: 
+            maxi = tableau[i]
+            indices.append(i)
+
+    return (maxi,indices)
+
+def renverse(pile):
+    '''renvoie une pile contenant les mêmes éléments que pile,
+    mais dans l'ordre inverse.
+    Cette fonction détruit pile.'''
+    pile_inverse = [] 
+    while pile != []:
+        pile_inverse.append(pile.pop())
+    return pile_inverse
+
+
+def positifs(pile):
+    '''renvoie une pile contenant les éléments positifs de pile,
+    dans le même ordre. Cette fonction détruit pile.'''
+    pile_positifs = [] 
+    while pile != []:
+        element = pile.pop() 
+        if element >= 0: 
+            pile_positifs.append(element)
+    return renverse(pile_positifs)
+
+print("------------------ TEST SUJET 21 ------------------")
+
+print(renverse([1, 2, 3, 4, 5]))
+print(positifs([-1, 0, 5, -3, 4, -6, 10, 9, -8]))
+
+####################################### Sujet 22 #######################################
+
+def recherche(elt:int,tab:list[int])->int:
+    indice = None
+    for i in range(len(tab)):
+        if tab[i] == elt: 
+            indice = i
+    
+    return indice
+
+class AdresseIP: # DUR A REVOIR AVANT
+    def __init__(self, adresse):
+        self.adresse = adresse
+
+    def liste_octets(self):
+        """renvoie une liste de nombres entiers,
+        la liste des octets de l'adresse IP"""
+        # Note : split découpe la chaine de caractères 
+        # en fonction du séparateur
+        return [int(i) for i in self.adresse.split(".")]
+
+    def est_reservee(self):
+        """renvoie True si l'adresse IP est une adresse
+        réservée, False sinon"""
+        reservees = ['192.168.0.0', '192.168.0.255'] 
+        return self.adresse in reservees
+
+    def adresse_suivante(self):
+        """renvoie un objet de AdresseIP avec l'adresse
+        IP qui suit l'adresse self si elle existe et None sinon"""
+        octets = self.liste_octets()
+        if octets[3] == 254: 
+            return None
+        octet_nouveau = octets[3] + 1 
+        return AdresseIP('192.168.0.' + str(octet_nouveau))
+    
+print("------------------ TEST SUJET 22 ------------------")
+
+print(recherche(1, [10, 12, 1, 56]))
+
+adresse1 = AdresseIP('192.168.0.1')
+adresse2 = AdresseIP('192.168.0.2') 
+adresse3 = AdresseIP('192.168.0.3') 
+
+print(adresse1.liste_octets())
+print(adresse1.est_reservee())
+print(adresse3.est_reservee())
+print(adresse2.adresse_suivante().adresse)
+
+####################################### Sujet 23 #######################################
+
+def effectif_notes(tableau:list[int])->list[int]: # DUR A REVISER AVANT
+
+    liste = [0]*11
+    for element in tableau:
+        liste[element]+=1
+
+    return liste
+
+
+def notes_triees(eff:list[int])->list[int]:
+    for i in range(len(eff)-1):
+        for j in range(i+1, len(eff)):
+            if eff[j] < eff[i]:
+                eff[j],eff[i] = eff[i],eff[j]
+    
+    return eff
+
+def dec_to_bin(nb_dec):
+    q, r = nb_dec // 2, nb_dec % 2
+    if q == 0 : 
+        return str(r)
+    else:
+        return dec_to_bin(q) + str(r)
+
+def bin_to_dec(nb_bin):
+    if len(nb_bin) == 1:
+        if nb_bin == '0': 
+            return 0
+        else:
+            return 1 
+    else:
+        if nb_bin[-1] == '0':
+            bit_droit = 0
+        else:
+            bit_droit = 1
+        return 2 * bin_to_dec(nb_bin[:-1]) + bit_droit
+
+print("------------------ TEST SUJET 23 ------------------")
+
+notes_eval = [2, 0, 5, 9, 6, 9, 10, 5, 7, 9, 9, 5, 0, 9, 6, 5, 4]
+print(effectif_notes(notes_eval))
+
+print(notes_triees(notes_eval))
+
+print(dec_to_bin(25))
+print(bin_to_dec('101010'))
+
+####################################### Sujet 24 #######################################
+
+def enumere(tab:list[int]):
+    dico = {}
+
+    for i in range(len(tab)): 
+        element = tab[i]
+        if element in dico: 
+            dico[element]+=[i]
+        else : 
+            dico[element] = [i]
+    return dico
+
+class Noeud:
+    """Classe représentant un noeud d'un arbre binaire"""
+    def __init__(self, etiquette, gauche, droit):
+        """Crée un noeud de valeur etiquette avec 
+        gauche et droit comme fils."""
+        self.etiquette = etiquette
+        self.gauche = gauche
+        self.droit = droit
+
+def parcours(arbre, liste):
+    """parcours récursivement l'arbre en ajoutant les étiquettes
+    de ses noeuds à la liste passée en argument en ordre infixe."""
+    if arbre is not None:
+        parcours(arbre.gauche, liste)
+        liste.append(arbre.etiquette)
+        parcours(arbre.droit, liste)
+    return liste
+
+def insere(arbre, cle):
+    """insere la cle dans l'arbre binaire de recherche
+    représenté par arbre.
+    Retourne l'arbre modifié."""
+    if arbre is None:
+        return Noeud(cle, None, None) # creation d'une feuille
+    else:
+        if cle < arbre.etiquette: 
+            arbre.gauche = insere(arbre.gauche, cle)
+        else:
+            arbre.droit = insere(arbre.droit,cle)
+        return arbre
+
+print("------------------ TEST SUJET 24 ------------------")
+
+print(enumere([1, 2, 3]))
+print(enumere([1, 1, 2, 3, 2, 1]))
+
+a = Noeud(5, None, None)
+a = insere(a, 2)
+a = insere(a, 3)
+a = insere(a, 7)
+print(parcours(a, []))
+
+a = insere(a, 1)
+a = insere(a, 4)
+a = insere(a, 6)
+a = insere(a, 8)
+print(parcours(a, []))
+
+####################################### Sujet 25 #######################################
+
+def annee_temperature_minimale(tab_temp,tab_annees):
+    assert len(tab_temp) == len(tab_annees)
+    
+    mini_temp = tab_temp[0]
+    annee_mini = tab_annees[0]
+
+    for i in range (len(tab_temp)):
+        if tab_temp[i] < mini_temp:
+            mini_temp = tab_temp[i]
+            annee_mini = tab_annees[i]
+    
+    return (mini_temp,annee_mini) 
+
+def inverse_chaine(chaine):
+    '''Retourne la chaine inversée'''
+    resultat = '' 
+    for caractere in chaine:
+        resultat = caractere + resultat 
+    return resultat
+
+def est_palindrome(chaine):
+    '''Renvoie un booléen indiquant si la chaine ch
+    est un palindrome'''
+    inverse = inverse_chaine(chaine)
+    return chaine == inverse 
+
+def est_nbre_palindrome(nbre):
+    '''Renvoie un booléen indiquant si le nombre nbre 
+    est un palindrome'''
+    chaine = str(nbre) 
+    return est_palindrome(chaine)
+
+print("------------------ TEST SUJET 25 ------------------")
+
+t_moy = [14.9, 13.3, 13.1, 12.5, 13.0, 13.6, 13.7]
+annees = [2013, 2014, 2015, 2016, 2017, 2018, 2019]
+
+print(annee_temperature_minimale(t_moy, annees))
+
+print(est_palindrome('NSI'))
+print(est_palindrome('ISN-NSI'))
+
+print(est_nbre_palindrome(214312))
+print(est_nbre_palindrome(213312))
+
+####################################### Sujet 26 #######################################
+
+
+
+print("------------------ TEST SUJET 26 ------------------")
