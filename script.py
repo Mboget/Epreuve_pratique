@@ -186,3 +186,200 @@ print("------------------ TEST SUJET 11 ------------------")
 
 arbre = ( ( (None, 1, None), 2, (None, 3, None) ), 4, ( (None, 5, None), 6, (None, 7, None) ) )
 print(parcours_largeur(arbre))
+
+
+####################################### Sujet 12 #######################################
+
+def fusion(tab1, tab2): # DUR A REVOIR AVANT
+    tab_fusion = []
+    i1 = 0
+    i2 = 0
+    while i1 < len(tab1) and i2 < len(tab2):
+        if tab1[i1] < tab2[i2]:
+            tab_fusion.append(tab1[i1])
+            i1 += 1
+        else:
+            tab_fusion.append(tab2[i2])
+            i2 += 1
+
+    if i1 == len(tab1):
+        while i2 < len(tab2):
+            tab_fusion.append(tab2[i2])
+            i2 += 1
+    else:
+        while i1 < len(tab1):
+            tab_fusion.append(tab1[i1])
+            i1 += 1        
+
+    return tab_fusion
+
+romains = {"I":1, "V":5, "X":10, "L":50, "C":100, "D":500, "M":1000}
+
+def traduire_romain(nombre):
+    """ Renvoie l’écriture décimale du nombre donné en chiffres
+    romains """
+    if len(nombre) == 1:
+        return romains[nombre]
+    elif romains[nombre[0]] >= romains[nombre[1]]:
+        return romains[nombre[0]] + traduire_romain(nombre[1:])
+    else:
+        return traduire_romain(nombre[1:]) - romains[nombre[0]]
+
+print("------------------ TEST SUJET 12 ------------------")
+print(fusion([3, 5], [2, 5]))
+print(fusion([-2, 4], [-3, 5, 10]))
+print(fusion([4], [2, 6]))
+print(fusion([], []))
+print(fusion([1, 2, 3], []))
+
+print(traduire_romain("XIV"),"\n",traduire_romain("CXLII"),"\n",traduire_romain("MMXXIV"))
+
+####################################### Sujet 13 #######################################
+
+def recherche (elt,tab):
+    for i in range(len(tab)):
+        if tab[i] == elt:
+            return i
+    return None 
+
+def recherche2(elt,tab):
+    try: 
+        tab.index(elt)
+    except ValueError:
+        return None 
+
+def insere(tab, a):
+    """
+    Insère l'élément a (int) dans le tableau tab (list)
+    trié par ordre croissant à sa place et renvoie le
+    nouveau tableau.
+    """
+    tab_a = [ a ] + tab # nouveau tableau contenant a 
+                        # suivi des éléments de tab
+    i = 0
+    while i < len(tab) and a > tab[i]: 
+        tab_a[i] = tab[i] 
+        tab_a[i+1] = a
+        i += 1 
+    return tab_a
+
+print("------------------ TEST SUJET 13 ------------------")
+
+print(recherche(1,[2,3,4]))
+print(recherche2(1,[2,3,4]))
+
+#print([2,3,4].index(1))
+
+print(insere([1, 2, 4, 5], 3))
+
+####################################### Sujet 14 #######################################
+from random import randint  # noqa: E402
+
+def lancer(n:int)->list[int]:
+    tab = []
+    for i in range(n):
+        tab.append(randint(1,6))
+    return tab
+
+def paire_6(tableau:list[int])->bool:
+    """Renvoie True s'il y a plus de deux 6 dans le tableau"""
+    c = 0 
+
+    for element in tableau:
+        if element == 6:
+            c+=1 
+    
+    if c >= 2 : 
+        return True 
+    
+    else : 
+        return False 
+
+def nombre_lignes(image):
+    '''renvoie le nombre de lignes de l'image'''
+    return len(image) 
+
+def nombre_colonnes(image):
+    '''renvoie la largeur de l'image'''
+    return len(image[0]) 
+
+def negatif(image): # DUR A REVOIR AVANT 
+    '''renvoie le negatif de l'image sous la forme
+       d'une liste de listes'''
+    # on cree une image de 0 aux memes dimensions 
+    # que le parametre image
+    nouvelle_image = [[0 for k in range(nombre_colonnes(image))]
+         for i in range(nombre_lignes(image))]
+
+    for i in range(nombre_lignes(image)):
+        for j in range(nombre_colonnes(image)): 
+            nouvelle_image[i][j] = 255 - image[i][j] 
+    return nouvelle_image
+
+def binaire(image, seuil): # DUR A REVOIR AVANT
+    '''renvoie une image binarisee de l'image sous la forme
+       d'une liste de listes contenant des 0 si la valeur
+       du pixel est strictement inferieure au seuil et 1 sinon'''
+    nouvelle_image = [[0] * nombre_colonnes(image)
+                      for i in range(nombre_lignes(image))]
+
+    for i in range(nombre_lignes(image)):
+        for j in range(nombre_colonnes(image)): 
+            if image[i][j] < seuil : 
+                nouvelle_image[i][j] = 0 
+            else:
+                nouvelle_image[i][j] = 255 
+    return nouvelle_image
+
+print("------------------ TEST SUJET 14 ------------------")
+for _ in range(1):
+    a = lancer(5)
+    print(a)
+    print(paire_6(a))
+
+####################################### Sujet 15 #######################################
+
+def multiplication2 (n1,n2):
+    if n1 < 0:
+        return -multiplication2(-n1,n2) 
+    elif n2 < 0 : 
+        return -multiplication2(n1,-n2)
+    res = 0 
+    for _ in range(n2):
+        res += n1
+
+    return res
+
+def chercher(tab, x, i, j):
+    '''Renvoie l'indice de x dans tab, si x est dans tab, 
+    None sinon.
+    On suppose que tab est trié dans l'ordre croissant.'''
+    if i > j:
+        return None
+    m = (i + j) // 2
+    if tab[m] < x: 
+        return chercher(tab, x, m+1 , j) 
+    elif tab[m] > x:
+        return chercher(tab, x, i , m-1) 
+    else:
+        return m
+
+print("------------------ TEST SUJET 15 ------------------")
+
+print(multiplication2(4,-8))
+
+print(chercher([1, 5, 6, 6, 9, 12], 7, 0, 5))
+
+####################################### Sujet 16 #######################################
+
+def moyenne(notes:list[(float,int)])->float:
+    assert notes != []
+    numerateur = 0 
+    denominateur = 0
+    for (note,coef) in notes:
+        numerateur += note*coef
+        denominateur += coef
+
+    return numerateur / denominateur
+
+print("------------------ TEST SUJET 16 ------------------")
